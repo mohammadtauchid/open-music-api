@@ -28,7 +28,7 @@ const init = async () => {
         return newResponse;
       }
 
-      if (!response.isSerrver) {
+      if (!response.isServer) {
         return h.response;
       }
 
@@ -36,7 +36,7 @@ const init = async () => {
         status: 'error',
         message: 'Something went wrong. Please try again later',
       });
-      newResponse.statusCode(500);
+      newResponse.code(500);
 
       return newResponse;
     }
