@@ -2,10 +2,12 @@ const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const SongService = require('./SongService');
 
 class AlbumService {
   constructor() {
     this._pool = new Pool();
+    this._songService = new SongService();
   }
 
   async addAlbum({ name, year }) {
@@ -37,7 +39,13 @@ class AlbumService {
       throw new NotFoundError('Album not found');
     }
 
-    return result.rows[0];
+    const songs = await this._songService.getSongsByAlbumId(id);
+    const newResult = {
+      ...result.rows[0],
+      songs,
+    };
+
+    return newResult;
   }
 
   async editAlbumById(id, { name, year }) {
