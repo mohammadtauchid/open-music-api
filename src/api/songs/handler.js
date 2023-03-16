@@ -24,7 +24,7 @@ class MusicHandler {
   }
 
   async getSongsHandler(request) {
-    const songs = await this._songService.getSongs(request.payload);
+    const songs = await this._songService.getSongs(request.query);
 
     return {
       status: 'success',

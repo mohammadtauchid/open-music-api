@@ -32,10 +32,11 @@ class SongService {
     return result.rows[0].id;
   }
 
-  async getSongs() {
+  async getSongs({ title = '', performer = '' }) {
     const result = await this._pool.query('SELECT id, title, performer FROM songs');
 
-    return result.rows;
+    return result.rows.filter((song) => song.title.toLowerCase().includes(title.toLowerCase())
+      && song.performer.toLowerCase().includes(performer.toLowerCase()));
   }
 
   async getSongsByAlbumId(albumId) {
