@@ -3,13 +3,17 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const ClientError = require('./exceptions/ClientError');
 const albums = require('./api/albums');
+const songs = require('./api/songs');
 const AlbumService = require('./services/postgres/AlbumService');
+const SongService = require('./services/postgres/SongService');
 const {
   AlbumsValidator,
+  SongsValidator,
 } = require('./validator');
 
 const init = async () => {
   const albumsService = new AlbumService();
+  const songsService = new SongService();
   const server = Hapi.server({
     host: process.env.HOST,
     port: process.env.PORT,
@@ -25,6 +29,14 @@ const init = async () => {
     options: {
       service: albumsService,
       validator: AlbumsValidator,
+    },
+  });
+
+  await server.register({
+    plugin: songs,
+    options: {
+      service: songsService,
+      validator: SongsValidator,
     },
   });
 
@@ -46,13 +58,13 @@ const init = async () => {
         return h.response;
       }
 
-      // const newResponse = h.response({
-      //   status: 'error',
-      //   message: 'Something went wrong. Please try again later',
-      // });
-      // newResponse.code(500);
+      const newResponse = h.response({
+        status: 'error',
+        message: 'Something went wrong. Please try again later',
+      });
+      newResponse.code(500);
 
-      // return newResponse;
+      return newResponse;
     }
 
     return h.continue;
