@@ -12,6 +12,10 @@ exports.up = (pgm) => {
       type: 'TEXT',
       notNull: true,
     },
+    year: {
+      type: 'SMALLINT',
+      notNull: true,
+    },
     genre: {
       type: 'TEXT',
       notNull: true,
