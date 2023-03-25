@@ -9,7 +9,7 @@ npm run start
 
 ## How to drop all tables?
 ```bash
-npm run migrate down --all
+npm run migrate down 0
 ```
 
 ## Additional notes
