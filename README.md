@@ -12,6 +12,11 @@ npm run start
 npm run migrate down 0
 ```
 
+## How to reset the database?
+```bash
+npm run db-reset
+```
+
 ## Additional notes
 1. When optional field on payload body is not filled (undefined) or fill with `null`, then when insert into database, it will become null.
 2. There are several rules on `eslint` that turned off, such as:
