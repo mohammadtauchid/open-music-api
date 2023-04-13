@@ -27,7 +27,7 @@ const AuthenticationsValidator = require('./validator/authentications');
 
 const init = async () => {
   const albumsService = new AlbumService();
-  const songsService = new SongService();
+  const songsService = new SongService(albumsService);
   const usersService = new UserService();
   const authenticationsService = new AuthenticationService();
   const server = Hapi.server({
