@@ -44,16 +44,6 @@ class SongService {
       && song.performer.toLowerCase().includes(performer.toLowerCase()));
   }
 
-  async getSongsByAlbumId(albumId) {
-    const query = {
-      text: 'SELECT id, title, performer FROM songs WHERE "album_id" = $1',
-      values: [albumId],
-    };
-
-    const result = await this._pool.query(query);
-    return result.rows;
-  }
-
   async getSongById(id) {
     const query = {
       text: 'SELECT * FROM songs WHERE id = $1',
