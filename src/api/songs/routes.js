@@ -1,4 +1,4 @@
-const albumRoute = (songHandler) => [
+const songRoute = (songHandler) => [
   {
     method: 'POST',
     path: '/songs',
@@ -26,4 +26,4 @@ const albumRoute = (songHandler) => [
   },
 ];
 
-module.exports = albumRoute;
+module.exports = songRoute;
