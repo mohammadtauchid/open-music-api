@@ -3,6 +3,7 @@ const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const InvariantError = require('../../exceptions/InvariantError');
 const AuthenticationError = require('../../exceptions/AuthenticationError');
+const NotFoundError = require('../../exceptions/NotFoundError');
 
 class UserService {
   constructor() {
@@ -37,7 +38,7 @@ class UserService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new InvariantError('User not found');
+      throw new NotFoundError('User not found');
     }
 
     return result.rows[0];
