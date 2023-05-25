@@ -31,6 +31,19 @@ class CollaborationService {
 
     await this.pool.query(query);
   }
+
+  async verifyCollaborator({ playlistId, userId }) {
+    const query = {
+      text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
+      values: [playlistId, userId],
+    };
+
+    const result = await this.pool.query(query);
+
+    if (!result.rows.length) {
+      throw new InvariantError('Collaborator failed to verify');
+    }
+  }
 }
 
 module.exports = CollaborationService;
