@@ -53,9 +53,8 @@ class PlaylistService {
     await this._pool.query(query);
   }
 
-  async addPlaylistSong(playlistId, { songId }) {
+  async addPlaylistSong(playlistId, { songId, userId }) {
     await this._songService.verifySongId(songId, 'Song', 'add');
-
     const id = nanoid(16);
 
     const query = {
@@ -68,6 +67,8 @@ class PlaylistService {
     if (!result.rows[0].id) {
       throw new InvariantError('Song failed to add into playlist');
     }
+
+    this.addPlaylistSongActivity(playlistId, { songId, userId, action: 'add' });
   }
 
   async getPlaylistSongsByPlaylistId(id) {
@@ -99,12 +100,51 @@ class PlaylistService {
     };
   }
 
-  async deletePlaylistSongBySongId({ songId }) {
+  async deletePlaylistSongBySongId(playlistId, { songId, userId }) {
     await this._songService.verifySongId(songId, 'Song', 'delete');
 
     const query = {
-      text: 'DELETE FROM playlist_songs WHERE song_id = $1',
-      values: [songId],
+      text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2',
+      values: [playlistId, songId],
+    };
+
+    await this._pool.query(query);
+
+    this.addPlaylistSongActivity(playlistId, { songId, userId, action: 'delete' });
+  }
+
+  async getPlaylistSongActivitiesById(id) {
+    const query = {
+      text: `
+      SELECT u.username, s.title, psa.action, psa.time 
+      FROM 
+      playlist_song_activities AS psa,
+      users AS u,
+      songs AS s 
+      WHERE psa.song_id = s.id 
+      AND psa.user_id = u.id
+      AND psa.playlist_id = $1
+      ORDER BY psa.time`,
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    return {
+      playlistId: id,
+      activities: result.rows,
+    };
+  }
+
+  async addPlaylistSongActivity(playlistId, {
+    songId, userId, action,
+  }) {
+    const id = nanoid(16);
+    const time = new Date().toISOString();
+
+    const query = {
+      text: 'INSERT INTO playlist_song_activities VALUES($1, $2, $3, $4, $5, $6)',
+      values: [id, playlistId, songId, userId, action, time],
     };
 
     await this._pool.query(query);
